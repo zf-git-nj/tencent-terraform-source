@@ -1,0 +1,20 @@
+{
+    "version": "2.0",
+    "Statement": [
+        {
+            "Principal": {
+                "qcs": [
+                    "qcs::cam::anyone:anyone"
+                ]
+            },
+            "Action": [
+                "name/cos:DeleteBucket",
+                "name/cos:DeleteObject"
+            ],
+            "Effect": "Deny",
+            "Resource": [
+                "qcs::cos:${region}:uid/${app_id}:${bucket_name}/*"
+            ]
+        }
+    ]
+}

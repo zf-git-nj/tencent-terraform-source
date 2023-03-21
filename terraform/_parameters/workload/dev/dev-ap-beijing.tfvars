@@ -1,0 +1,5 @@
+region      = "ap-beijing"
+region_code = "bj"
+vpc_cidr    = "10.1.0.0/16"
+account_name = "dev"
+cluster_cidr = "192.168.0.0/16"
