@@ -30,7 +30,7 @@ variable "vpc_tags" {
 
 variable "availability_zone" {
   description = "Availability Zone"
-  default = "ap-beijing-1"
+  default = "ap-beijing-6"
   type = string
 }
 
@@ -63,7 +63,7 @@ variable "subnet_name" {
 
 variable "cidr_block" {
   description = "Subnet CIDR block"
-  default = "10.0.20.0/28"
+  default = "172.16.0.0/24"
   type = string
 }
 
