@@ -11,7 +11,7 @@ resource "tencentcloud_vpc" "vpc" {
 
 resource "tencentcloud_subnet" "subnet" {
   availability_zone = var.availability_zone
-  name              = var.name
+  name              = var.subnet_name
   vpc_id            = tencentcloud_vpc.vpc.id
   cidr_block        = var.cidr_block
   is_multicast      = var.is_multicast

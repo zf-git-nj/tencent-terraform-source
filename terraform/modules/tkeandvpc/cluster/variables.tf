@@ -55,7 +55,7 @@ variable "default_instance_type" {
   default = "SA3.MEDIUM8"
 }
 
-variable "name" {
+variable "subnet_name" {
   description = "Subnet name"
   default = "guagua-ci-temp-test"
   type = string
