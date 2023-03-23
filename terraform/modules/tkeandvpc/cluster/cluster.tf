@@ -58,7 +58,7 @@ resource "tencentcloud_kubernetes_node_pool" "node_pool" {
   max_size             = 10
   min_size             = 0
   vpc_id               = tencentcloud_vpc.vpc.id
-  subnet_ids           = [var.c_subnet] # TODO, put it in protected subnet
+  subnet_ids           = [tencentcloud_subnet.subnet.id] # TODO, put it in protected subnet
   retry_policy         = "INCREMENTAL_INTERVALS"
   desired_capacity     = 1
   enable_auto_scale    = true
