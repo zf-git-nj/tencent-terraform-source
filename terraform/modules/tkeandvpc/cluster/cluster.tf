@@ -49,7 +49,7 @@ resource "tencentcloud_kubernetes_cluster" "k8s_cluster" {
     enhanced_monitor_service   = true
     password                   = var.password
   }
-  depends_on = [tencentcloud_vpc.vpc]
+  depends_on = [tencentcloud_vpc.vpc, tencentcloud_security_group.k8s_sg]
 }
 
 # Node pool for autoscaling
@@ -84,5 +84,5 @@ resource "tencentcloud_kubernetes_node_pool" "node_pool" {
     enhanced_security_service  = true
     enhanced_monitor_service   = true
   }
-  depends_on = [tencentcloud_vpc.vpc, tencentcloud_subnet.subnet]
+  depends_on = [tencentcloud_vpc.vpc, tencentcloud_subnet.subnet, tencentcloud_security_group.k8s_sg]
 }
