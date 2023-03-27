@@ -86,3 +86,22 @@ resource "tencentcloud_kubernetes_node_pool" "node_pool" {
   }
   depends_on = [tencentcloud_vpc.vpc, tencentcloud_subnet.subnet, tencentcloud_security_group.k8s_sg]
 }
+
+resource "tencentcloud_kubernetes_addon_attachment" "addon_nginx" {
+  # Not supported on outposts
+  cluster_id = tencentcloud_kubernetes_cluster.k8s_cluster.id
+
+  request_body = <<EOF
+  {
+    "spec":{
+        "chart":{
+            "chartName":"ingressnginx",
+            "chartVersion":"1.2.0"
+        }
+    }
+  }
+
+  depends_on = [
+    tencentcloud_kubernetes_cluster.k8s_cluster
+  ]
+}
