@@ -90,9 +90,11 @@ resource "tencentcloud_kubernetes_node_pool" "node_pool" {
 resource "tencentcloud_kubernetes_addon_attachment" "addon_nginx" {
   # Not supported on outposts
   cluster_id = tencentcloud_kubernetes_cluster.k8s_cluster.id
+  name = "nginx_ingress_test"
 
   request_body = <<EOF
   {
+    "kind":"App",
     "spec":{
         "chart":{
             "chartName":"ingressnginx",
@@ -100,6 +102,7 @@ resource "tencentcloud_kubernetes_addon_attachment" "addon_nginx" {
         }
     }
   }
+EOF
 
   depends_on = [
     tencentcloud_kubernetes_cluster.k8s_cluster
