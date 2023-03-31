@@ -9,5 +9,9 @@ terraform {
           source  = "tencentcloudstack/tencentcloud"
           version = ">=1.77.7"
        }
+       kubectl = {
+          source  = "gavinbunney/kubectl"
+          version = ">= 1.7.0"
+       }
   }
 }

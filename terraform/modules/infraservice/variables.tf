@@ -6,7 +6,7 @@ variable "vpc_name" {
 
 variable "vpc_cidr" {
   description = "The cidr block used to launch a new vpc when 'vpc_id' is not specified."
-  default     = "172.16.0.0/16"
+  default     = "10.1.0.0/16"
   type        = string
 }
 
@@ -34,8 +34,16 @@ variable "availability_zone" {
   type = string
 }
 
+variable "region_code" {
+  default = "bj"
+}
+
+variable "account_name" {
+  default = "int"
+}
+
 variable "name" {
-  default = "default-cluster"
+  default = "tke-cluster-v1"
 }
 
 variable "k8s_version" {
