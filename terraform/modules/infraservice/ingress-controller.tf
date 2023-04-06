@@ -16,15 +16,6 @@ spec:
       service.kubernetes.io/service.extensiveParameters: '{"InternetAccessible":{"InternetChargeType":"TRAFFIC_POSTPAID_BY_HOUR","InternetMaxBandwidthOut":10}}'
     type: LoadBalancer
   workLoad:
-    hpa:
-      enable: true
-      maxReplicas: 2
-      metrics:
-      - pods:
-          metricName: k8s_pod_rate_cpu_core_used_limit
-          targetAverageValue: "80"
-        type: Pods
-      minReplicas: 1
     template:
       affinity: {}
       container:
@@ -36,10 +27,10 @@ spec:
           requests:
             cpu: "0.25"
             memory: 256Mi
-    # nodeSelector:
-      # cloud.tencent.com/auto-scaling-group-id: asg-d0c7cl1v  # node pool scaling group id is required
-    type: deployment
+      nodeSelector:
+        cloud.tencent.com/auto-scaling-group-id: "${tencentcloud_kubernetes_node_pool.node_pool.auto_scaling_group_id}"
+    type: daemonSet
 YAML
   
-  depends_on = [tencentcloud_kubernetes_addon_attachment.addon_nginx]
+  depends_on = [tencentcloud_kubernetes_addon_attachment.addon_nginx, tencentcloud_kubernetes_node_pool.node_pool]
 }
