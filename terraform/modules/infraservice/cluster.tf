@@ -28,7 +28,7 @@ resource "tencentcloud_kubernetes_cluster" "k8s_cluster" {
     instance_type              = var.default_instance_type
     system_disk_type           = "CLOUD_PREMIUM"
     system_disk_size           = 50
-    # internet_max_bandwidth_out = 10
+    internet_max_bandwidth_out = 10 # To enable access by public CLB, this must not be zero.
     internet_charge_type       = "TRAFFIC_POSTPAID_BY_HOUR"
     enhanced_security_service  = true
     enhanced_monitor_service   = true
@@ -71,11 +71,6 @@ resource "tencentcloud_kubernetes_node_pool" "node_pool" {
   depends_on = [tencentcloud_vpc.main_vpc, tencentcloud_subnet.protected_subnet, tencentcloud_security_group.k8s_sg]
 }
 
-resource "local_file" "private_key" {
-    content  = tencentcloud_kubernetes_cluster.k8s_cluster.kube_config
-    filename = "kube_config"
-}
-
 resource "tencentcloud_kubernetes_addon_attachment" "addon_nginx" {
   # Not supported on outposts
   cluster_id = tencentcloud_kubernetes_cluster.k8s_cluster.id
@@ -94,4 +89,13 @@ EOF
   depends_on = [
     tencentcloud_kubernetes_cluster.k8s_cluster
   ]
+}
+
+resource "local_file" "private_key" {
+    content  = tencentcloud_kubernetes_cluster.k8s_cluster.kube_config
+    filename = "./kube_config"
+}
+
+data "tencentcloud_kubernetes_clusters" "info" {
+  cluster_id = tencentcloud_kubernetes_cluster.k8s_cluster.id
 }

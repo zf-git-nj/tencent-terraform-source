@@ -47,7 +47,7 @@ variable "name" {
 }
 
 variable "k8s_version" {
-  default = "1.20.6"
+  default = "1.22.5"
 }
 
 variable "cluster_cidr" {

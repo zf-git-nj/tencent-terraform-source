@@ -22,3 +22,6 @@ output "pgw_endpoint" {
 output "security_policy" {
   value = tencentcloud_kubernetes_cluster.k8s_cluster.security_policy
 }
+output "auto_scaling_group_id" {
+  value = tencentcloud_kubernetes_node_pool.node_pool.auto_scaling_group_id
+}
