@@ -17,9 +17,9 @@ resource "kubectl_manifest" "ingress_controller" {
 apiVersion: cloud.tencent.com/v1alpha1
 kind: NginxIngress
 metadata:
-  name: ingress
+  name: nginx
 spec:
-  ingressClass: ingress
+  ingressClass: nginx
   service:
     annotation:
       service.cloud.tencent.com/pass-to-target: "true"
