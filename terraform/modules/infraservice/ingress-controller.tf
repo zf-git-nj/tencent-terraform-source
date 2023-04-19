@@ -1,19 +1,5 @@
-provider "kubectl" {
-  # very tricky approach here to avoid terraform init this provider before cluster is ready
-  host = data.tencentcloud_kubernetes_clusters.info.list.0.cluster_external_endpoint
-
-  # actually we need kubeconf for cluster access
-  config_path = "kube_config"
-
-  # load_config_file = false
-  apply_retry_count = 3
-}
-
-
-# Deploy public ingress controller to cluster node pool in DaemonSet mode, with fixed ingress class name
-resource "kubectl_manifest" "ingress_controller" {
-# Note Do not change ingressClass name
-    yaml_body = <<YAML
+resource "local_file" "ingress_controller" {
+  content  = <<YAML
 apiVersion: cloud.tencent.com/v1alpha1
 kind: NginxIngress
 metadata:
@@ -41,22 +27,21 @@ spec:
         cloud.tencent.com/auto-scaling-group-id: "${tencentcloud_kubernetes_node_pool.node_pool.auto_scaling_group_id}"
     type: daemonSet
 YAML
+  filename = "ingress_controller.yaml"
 
-  depends_on = [tencentcloud_kubernetes_addon_attachment.addon_nginx, local_file.private_key]
+  depends_on = [
+    tencentcloud_kubernetes_node_pool.node_pool,
+    tencentcloud_kubernetes_addon_attachment.addon_nginx
+  ]
 }
 
-# remove ingress controller instance creation state from .tfstate
-# it could lead to errors in destroy stage
-# resource "time_sleep" "wait_for_ingress_controller" {
-#   create_duration = "30s"
-#   depends_on = [kubectl_manifest.ingress_controller]
-# }
+resource "null_resource" "create_ingress_controller" {
+  provisioner "local-exec" {
+    when = create
+    command = "kubectl --kubeconfig ./kube_config apply -f ./ingress_controller.yaml"
+  }
 
-# resource "null_resource" "ignore-nginxingress-instance-delete-error" {
-#   provisioner "local-exec" {
-#     when    = create
-#     command = "terraform state rm kubectl_manifest.ingress_controller"
-#   }
-
-#   depends_on = [time_sleep.wait_for_ingress_controller]
-# }
+  depends_on = [
+    local_file.ingress_controller
+  ]
+}

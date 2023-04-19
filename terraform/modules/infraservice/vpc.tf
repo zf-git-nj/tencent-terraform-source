@@ -1,26 +1,25 @@
 locals {
-  region_label = "${var.region_code}-${var.account_name}"
-  tags         = {}
+  vpc_region_label = "${var.env_name}-${var.region_code}-${var.name}"
 }
 
 # VPC
 # 10.1.0.0/16
 # =======================================================================================
 resource "tencentcloud_vpc" "main_vpc" {
-  name                 = "vpc-${local.region_label}-main"
+  name                 = "vpc-${local.vpc_region_label}-main"
   cidr_block           = var.vpc_cidr
 }
 
 # EIP
 # =======================================================================================
 resource "tencentcloud_eip" "eip_nat" {
-  name = "eip-${local.region_label}"
+  name = "eip-${local.vpc_region_label}"
 }
 
 # NAT
 # =======================================================================================
 resource "tencentcloud_nat_gateway" "nat" {
-  name             = "nat-${local.region_label}"
+  name             = "nat-${local.vpc_region_label}"
   vpc_id           = tencentcloud_vpc.main_vpc.id
   bandwidth        = 100
   max_concurrent   = 1000000
@@ -32,9 +31,9 @@ resource "tencentcloud_nat_gateway" "nat" {
 # Public
 # 10.1.16.0/20 -> 4096 ip
 resource "tencentcloud_subnet" "public_subnet" {
-  name              = "sbn-${local.region_label}-public"
+  name              = "sbn-${local.vpc_region_label}-public"
   cidr_block        = cidrsubnet(var.vpc_cidr, 4, 1)
-  availability_zone = var.az
+  availability_zone = var.availability_zone
   vpc_id            = tencentcloud_vpc.main_vpc.id
   route_table_id    = tencentcloud_route_table.public_rtable.id
 }
@@ -42,9 +41,9 @@ resource "tencentcloud_subnet" "public_subnet" {
 # Protected
 # 10.1.32.0/20 -> 4096 ip
 resource "tencentcloud_subnet" "protected_subnet" {
-  name              = "sbn-${local.region_label}-protected"
+  name              = "sbn-${local.vpc_region_label}-protected"
   cidr_block        = cidrsubnet(var.vpc_cidr, 4, 2)
-  availability_zone = var.az
+  availability_zone = var.availability_zone
   vpc_id            = tencentcloud_vpc.main_vpc.id
   route_table_id    = tencentcloud_route_table.protected_rtable.id
 }
@@ -53,9 +52,9 @@ resource "tencentcloud_subnet" "protected_subnet" {
 # Private
 # 10.1.48.0/20 -> 4096 ip
 resource "tencentcloud_subnet" "private_subnet" {
-  name              = "sbn-${local.region_label}-private"
+  name              = "sbn-${local.vpc_region_label}-private"
   cidr_block        = cidrsubnet(var.vpc_cidr, 4, 3)
-  availability_zone = var.az
+  availability_zone = var.availability_zone
   vpc_id            = tencentcloud_vpc.main_vpc.id
   route_table_id    = tencentcloud_route_table.private_rtable.id
 }
@@ -64,19 +63,19 @@ resource "tencentcloud_subnet" "private_subnet" {
 # ==============================================================
 # Public RT
 resource "tencentcloud_route_table" "public_rtable" {
-  name   = "rtb-${local.region_label}-public"
+  name   = "rtb-${local.vpc_region_label}-public"
   vpc_id = tencentcloud_vpc.main_vpc.id
 }
 
 # Protected RT
 resource "tencentcloud_route_table" "protected_rtable" {
-  name   = "rtb-${local.region_label}-protected"
+  name   = "rtb-${local.vpc_region_label}-protected"
   vpc_id = tencentcloud_vpc.main_vpc.id
 }
 
 # Private RT
 resource "tencentcloud_route_table" "private_rtable" {
-  name   = "rtb-${local.region_label}-private"
+  name   = "rtb-${local.vpc_region_label}-private"
   vpc_id = tencentcloud_vpc.main_vpc.id
 }
 

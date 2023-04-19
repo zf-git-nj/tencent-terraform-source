@@ -1,13 +1,16 @@
 # TKE cluster
 # TODO, evaluate EKS
 # network https://cloud.tencent.com/document/product/457/50353
+locals {
+  cluster_region_label = "${var.env_name}-${var.region_code}-${var.name}"
+}
 
 resource "tencentcloud_kubernetes_cluster" "k8s_cluster" {
   vpc_id                                     = tencentcloud_vpc.main_vpc.id
   cluster_version                            = var.k8s_version
   cluster_cidr                               = var.cluster_cidr
   cluster_max_pod_num                        = 256
-  cluster_name                               = var.name
+  cluster_name                               = "tke-${local.cluster_region_label}"
   cluster_desc                               = "k8s main cluster"
   cluster_max_service_num                    = 2048
   cluster_internet                           = true
@@ -20,15 +23,15 @@ resource "tencentcloud_kubernetes_cluster" "k8s_cluster" {
   deletion_protection                        = false # can disable from UI
 
   worker_config {
-    instance_name              = "${var.name}-node"
-    public_ip_assigned         = false # TODO, disable public ip and access through bastion
+    instance_name              = "tke-${local.cluster_region_label}-node"
+    public_ip_assigned         = false # disable public ip and access through bastion
     subnet_id                  = tencentcloud_subnet.protected_subnet.id # TODO, put it in protected subnet
     security_group_ids         = [tencentcloud_security_group.k8s_sg.id]
-    availability_zone          = var.az
+    availability_zone          = var.availability_zone
     instance_type              = var.default_instance_type
     system_disk_type           = "CLOUD_PREMIUM"
     system_disk_size           = 50
-    internet_max_bandwidth_out = 10 # To enable access by public CLB, this must not be zero.
+    # internet_max_bandwidth_out = 10 # To enable access by public CLB, this must not be zero.
     internet_charge_type       = "TRAFFIC_POSTPAID_BY_HOUR"
     enhanced_security_service  = true
     enhanced_monitor_service   = true
@@ -40,7 +43,7 @@ resource "tencentcloud_kubernetes_cluster" "k8s_cluster" {
 
 # Node pool for autoscaling
 resource "tencentcloud_kubernetes_node_pool" "node_pool" {
-  name                 = "${var.name}-pool"
+  name                 = "tke-${local.cluster_region_label}-pool"
   cluster_id           = tencentcloud_kubernetes_cluster.k8s_cluster.id
   max_size             = 2
   min_size             = 1
@@ -94,8 +97,4 @@ EOF
 resource "local_file" "private_key" {
     content  = tencentcloud_kubernetes_cluster.k8s_cluster.kube_config
     filename = "./kube_config"
-}
-
-data "tencentcloud_kubernetes_clusters" "info" {
-  cluster_id = tencentcloud_kubernetes_cluster.k8s_cluster.id
 }
