@@ -1,5 +1,5 @@
 locals {
-  vpc_region_label = "${var.env_name}-${var.region_code}-${var.name}"
+  vpc_region_label = "${var.env_name}-${var.region_code}"
 }
 
 # VPC

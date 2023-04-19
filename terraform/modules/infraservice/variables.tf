@@ -1,5 +1,5 @@
 variable "name" {
-  default = "kube-provision-cluster-test"
+  default = "kube-provision-cluster"
   type    = string
 }
 
