@@ -56,32 +56,45 @@ variable "password" {
 }
 
 variable "charge_type" {
+  description = "Pay type of the postgresql instance"
   default= "POSTPAID_BY_HOUR"
 }
 
 variable "engine_version" {
+  description = "Version of the postgresql database engine"
   default="10.4"
 }
 
 variable "root_user" {
+  description = "Instance root user name"
   default="postgresuser"
 }
 
 variable "charset" {
+  description = "Charset of the postgresql instance"
   default="UTF8"
 }
-variable "memory" {}
-variable "storage" {}
+
+variable "memory" {
+  description = "Memory size(GB)"
+}
+
+variable "storage" {
+  description = "Storage size(GB)"
+}
+
 variable "min_backup_start_time" {
   default="00:00:01"
 }
+
 variable "max_backup_start_time" {
   default="01:00:01"
 }
+
 variable "base_backup_retention_period" {
   default="7"
 }
+
 variable "backup_period" {
-  #default=["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
   default=["saturday", "sunday"]
 }
