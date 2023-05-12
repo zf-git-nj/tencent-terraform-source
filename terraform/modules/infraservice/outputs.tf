@@ -25,3 +25,6 @@ output "security_policy" {
 output "auto_scaling_group_id" {
   value = tencentcloud_kubernetes_node_pool.node_pool.auto_scaling_group_id
 }
+output "rds_connect" {
+  value = "${tencentcloud_postgresql_instance.postgres.private_access_ip}:${tencentcloud_postgresql_instance.postgres.private_access_port}"
+}
